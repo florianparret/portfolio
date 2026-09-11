@@ -4,6 +4,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -41,14 +42,20 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http,
             JwtAuthenticationFilter jwtAuthenticationFilter,
-            CorsConfigurationSource corsConfigurationSource)
+            CorsConfigurationSource corsConfigurationSource,
+            RestAuthenticationEntryPoint restAuthenticationEntryPoint)
             throws Exception {
         http.cors(cors -> cors.configurationSource(corsConfigurationSource))
                 // CSRF classique désactivé : le cookie JWT est SameSite=Strict, ce qui empêche
                 // déjà le navigateur de l'envoyer sur une requête cross-site.
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+                .exceptionHandling(exceptions -> exceptions.authenticationEntryPoint(restAuthenticationEntryPoint))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.POST, "/api/projects").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/projects/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/projects/**").authenticated()
+                        .anyRequest().permitAll())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
