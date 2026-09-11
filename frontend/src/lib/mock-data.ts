@@ -11,4 +11,5 @@ export const aboutContent = {
     "Développeur en apprentissage actif, je construis ce portfolio comme mon premier projet full-stack démontrable, avec l'objectif de comprendre et savoir expliquer chaque choix technique.",
     "Stack principale : Next.js (TypeScript, Tailwind) côté frontend, Spring Boot (Java 21, PostgreSQL, Flyway) côté backend.",
   ],
+  stack: ["Next.js", "TypeScript", "Tailwind", "Java 21", "Spring Boot", "PostgreSQL", "Flyway"],
 };
