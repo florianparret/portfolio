@@ -18,7 +18,6 @@
   --accent: #4d6b00;
   --accent-foreground: #fafaf9;
   --accent-glow: color-mix(in srgb, var(--accent) 22%, transparent);
-  --hero-from: var(--background);
 }
 
 @theme inline {
@@ -40,18 +39,32 @@
     --border: rgba(237, 237, 234, 0.14);
     --accent: #ccff33;
     --accent-foreground: #0a0a0b;
-    --hero-from: #1c1c20;
   }
 }
 
+/*
+ * Fond persistant sur <body> plutôt que dupliqué (avec une position
+ * différente) sur chaque page : <body> n'est jamais remonté par
+ * l'App Router lors de la navigation, contrairement à {children}. Le halo
+ * et la texture de points restent donc parfaitement stables d'une page à
+ * l'autre — c'est ce qui évite la "coupure" visuelle au clic sur un lien,
+ * qu'on aurait toujours avec un halo positionné par page même en gardant
+ * l'animation d'entrée du contenu.
+ */
 body {
-  background: var(--background);
-  background-image: radial-gradient(
-    circle,
-    color-mix(in srgb, var(--accent) 18%, transparent) 1px,
-    transparent 1px
-  );
-  background-size: 22px 22px;
+  background-color: var(--background);
+  background-image:
+    radial-gradient(circle at 20% 15%, var(--accent-glow), transparent 45%),
+    radial-gradient(
+      circle,
+      color-mix(in srgb, var(--accent) 18%, transparent) 1px,
+      transparent 1px
+    );
+  background-size:
+    100% 100%,
+    22px 22px;
+  background-repeat: no-repeat, repeat;
+  background-attachment: fixed, fixed;
   color: var(--foreground);
   font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
 }
@@ -68,28 +81,11 @@ body {
 }
 
 .page-transition {
-  animation: page-transition-in 0.4s ease-out;
-}
-
-@keyframes page-transition-glow {
-  0% {
-    opacity: 0;
-  }
-  35% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
-}
-
-.page-transition-glow {
-  animation: page-transition-glow 0.6s ease-out;
+  animation: page-transition-in 0.25s ease-out;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .page-transition,
-  .page-transition-glow {
+  .page-transition {
     animation: none;
   }
 }

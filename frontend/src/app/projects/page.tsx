@@ -7,12 +7,8 @@ export default async function ProjectsPage() {
   const result = await fetchProjects();
 
   return (
-    <section className="relative flex flex-1 flex-col overflow-hidden">
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_15%_10%,var(--accent-glow),transparent_45%)]"
-      />
-      <div className="relative mx-auto flex w-full max-w-4xl flex-1 flex-col gap-8 px-6 py-24">
+    <section className="flex flex-1 flex-col">
+      <div className="mx-auto flex w-full max-w-4xl flex-1 flex-col gap-8 px-6 py-24">
         <p className="font-mono text-xs tracking-widest text-accent uppercase">
           Sélection
         </p>
