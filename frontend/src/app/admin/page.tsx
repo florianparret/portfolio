@@ -15,7 +15,7 @@ export default async function AdminPage() {
 
       <Link
         href="/admin/projects/new"
-        className="w-fit rounded-full bg-foreground px-5 py-3 text-sm font-medium text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc]"
+        className="w-fit rounded-full bg-accent px-5 py-3 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent/90"
       >
         Nouveau projet
       </Link>
