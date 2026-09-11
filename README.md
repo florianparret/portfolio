@@ -1,0 +1,99 @@
+# Portfolio Full-Stack — Java / React
+
+## 1. Présentation
+
+Portfolio personnel et premier projet démontrable, construit comme une vraie application full-stack
+(pas un site statique). Il présente mon profil, mon parcours et mes projets, et sert de socle pour
+en ajouter d'autres au fil du temps (ex. application de suivi de candidatures).
+
+- Démo : _à venir_
+- Contexte, objectifs et choix techniques détaillés : voir la page projet correspondante une fois
+  le contenu publié, et `DECISIONS.md` pour le détail des arbitrages techniques.
+
+## 2. Stack technique
+
+**Frontend** — Next.js (App Router), TypeScript (strict), React, Tailwind CSS, React Hook Form, Zod,
+TanStack Query (si pertinent), Vitest + Testing Library, Playwright.
+
+**Backend** — Java 21, Spring Boot (Web, Data JPA, Security), PostgreSQL, Flyway, JUnit, Mockito,
+Testcontainers, springdoc-openapi.
+
+**DevOps** — Docker, Docker Compose (dev local), GitHub Actions.
+
+## 3. Architecture
+
+Monolithe modulaire côté backend (package-by-feature), API REST claire, frontend et backend
+séparés et déployés indépendamment.
+
+```
+[ Next.js frontend ]  <—— REST/JSON ——>  [ Spring Boot backend ]  <——>  [ PostgreSQL ]
+```
+
+Détail complet : voir le plan de projet (section Architecture technique) et `DECISIONS.md`.
+
+## 4. Installation
+
+Prérequis :
+- Node.js 20+
+- Java 21
+- Docker et Docker Compose
+
+```bash
+git clone <url-du-repo>
+cd portfolio
+cp backend/.env.example backend/.env
+cp frontend/.env.example frontend/.env.local
+```
+
+## 5. Variables d'environnement
+
+| Variable | Emplacement | Description |
+|---|---|---|
+| `SPRING_DATASOURCE_URL` | backend | URL de connexion PostgreSQL |
+| `SPRING_DATASOURCE_USERNAME` | backend | Utilisateur PostgreSQL |
+| `SPRING_DATASOURCE_PASSWORD` | backend | Mot de passe PostgreSQL |
+| `JWT_SECRET` | backend | Clé de signature des tokens JWT (dev uniquement, secret réel en prod) |
+| `NEXT_PUBLIC_API_URL` | frontend | URL de base de l'API backend |
+
+Voir `backend/.env.example` et `frontend/.env.example` pour le détail.
+
+## 6. Lancement local
+
+_À compléter une fois le backend et le frontend initialisés (Phase 1 et 2)._
+
+Cible : `docker compose up` pour lancer l'ensemble (Postgres + backend + frontend).
+
+## 7. Tests
+
+_À compléter au fur et à mesure des phases._
+
+- Backend : `mvn test` (unitaires), `mvn verify` (intégration avec Testcontainers)
+- Frontend : `npm run test` (Vitest), `npm run test:e2e` (Playwright)
+
+## 8. Déploiement
+
+_À compléter en Phase 10._ Cible : frontend sur Vercel, backend + PostgreSQL sur une plateforme
+type Railway/Render/Fly.io.
+
+## 9. Décisions techniques
+
+Voir `DECISIONS.md` pour le détail des choix (ex. JWT plutôt que session, monolithe modulaire,
+etc.) au format mini-ADR.
+
+## 10. Utilisation de l'IA
+
+Ce projet est développé avec l'aide de Claude Code comme assistant de développement, dans le cadre
+défini par `CLAUDE.md` : une tâche à la fois, code expliqué et revu, tests systématiques. Chaque
+section importante du code est comprise et validée avant d'être committée.
+
+## 11. Limites connues
+
+_À compléter au fur et à mesure — projet personnel en cours de construction, pas destiné à un
+usage en production à grande échelle._
+
+## 12. Améliorations futures
+
+- Articles / journal de développement
+- Entité Technology normalisée
+- Application de suivi de candidatures intégrée au portfolio
+- Statistiques admin

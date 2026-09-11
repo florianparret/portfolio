@@ -1,0 +1,30 @@
+# --- Secrets ---
+.env
+.env.local
+.env.*.local
+backend/.env
+frontend/.env.local
+
+# --- Node / Next.js (frontend) ---
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/coverage/
+frontend/playwright-report/
+frontend/test-results/
+frontend/.turbo/
+frontend/npm-debug.log*
+
+# --- Java / Maven / Spring Boot (backend) ---
+backend/target/
+backend/.mvn/wrapper/maven-wrapper.jar
+backend/*.log
+
+# --- IDE ---
+.idea/
+.vscode/
+*.iml
+.DS_Store
+
+# --- Docker ---
+docker-compose.override.yml
