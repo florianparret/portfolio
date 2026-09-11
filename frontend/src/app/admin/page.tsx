@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { fetchProjects } from "@/lib/api";
+import { LinkButton } from "@/components/ui/LinkButton";
 import { LogoutButton } from "./LogoutButton";
 import { DeleteProjectButton } from "./DeleteProjectButton";
 
@@ -13,21 +13,16 @@ export default async function AdminPage() {
         <LogoutButton />
       </div>
 
-      <Link
-        href="/admin/projects/new"
-        className="w-fit rounded-full bg-accent px-5 py-3 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent/90"
-      >
+      <LinkButton href="/admin/projects/new" variant="primary" className="w-fit">
         Nouveau projet
-      </Link>
+      </LinkButton>
 
       {!result.success && (
-        <p className="text-zinc-600 dark:text-zinc-400">
-          Impossible de charger les projets pour le moment.
-        </p>
+        <p className="text-muted">Impossible de charger les projets pour le moment.</p>
       )}
 
       {result.success && result.projects.length === 0 && (
-        <p className="text-zinc-600 dark:text-zinc-400">Aucun projet pour le moment.</p>
+        <p className="text-muted">Aucun projet pour le moment.</p>
       )}
 
       {result.success && result.projects.length > 0 && (
@@ -35,16 +30,16 @@ export default async function AdminPage() {
           {result.projects.map((project) => (
             <li
               key={project.slug}
-              className="flex items-center justify-between rounded-lg border border-black/[.08] p-4 dark:border-white/[.145]"
+              className="flex items-center justify-between rounded border-2 border-border p-4"
             >
               <span className="font-medium">{project.title}</span>
               <div className="flex gap-2">
-                <Link
+                <LinkButton
                   href={`/admin/projects/${project.slug}/edit`}
-                  className="rounded-full border border-black/[.08] px-4 py-2 text-sm transition-colors hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a]"
+                  variant="secondary"
                 >
                   Modifier
-                </Link>
+                </LinkButton>
                 <DeleteProjectButton slug={project.slug} />
               </div>
             </li>
