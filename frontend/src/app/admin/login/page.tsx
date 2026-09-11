@@ -3,6 +3,9 @@
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { login } from "@/lib/api";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { Label } from "@/components/ui/Label";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -32,24 +35,19 @@ export default function AdminLoginPage() {
       <h1 className="text-2xl font-semibold tracking-tight">Connexion admin</h1>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div className="flex flex-col gap-1">
-          <label htmlFor="username" className="text-sm font-medium">
-            Identifiant
-          </label>
-          <input
+          <Label htmlFor="username">Identifiant</Label>
+          <Input
             id="username"
             name="username"
             autoComplete="username"
             value={username}
             onChange={(event) => setUsername(event.target.value)}
             required
-            className="rounded-md border border-black/[.08] px-3 py-2 dark:border-white/[.145] dark:bg-transparent"
           />
         </div>
         <div className="flex flex-col gap-1">
-          <label htmlFor="password" className="text-sm font-medium">
-            Mot de passe
-          </label>
-          <input
+          <Label htmlFor="password">Mot de passe</Label>
+          <Input
             id="password"
             name="password"
             type="password"
@@ -57,19 +55,14 @@ export default function AdminLoginPage() {
             value={password}
             onChange={(event) => setPassword(event.target.value)}
             required
-            className="rounded-md border border-black/[.08] px-3 py-2 dark:border-white/[.145] dark:bg-transparent"
           />
         </div>
 
         {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
 
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="rounded-full bg-accent px-5 py-3 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent/90 disabled:opacity-50"
-        >
+        <Button type="submit" disabled={isSubmitting}>
           {isSubmitting ? "Connexion..." : "Se connecter"}
-        </button>
+        </Button>
       </form>
     </section>
   );
