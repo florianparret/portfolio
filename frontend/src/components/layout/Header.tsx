@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const links = [
   { href: "/", label: "Accueil" },
@@ -8,6 +11,8 @@ const links = [
 ];
 
 export function Header() {
+  const pathname = usePathname();
+
   return (
     <header className="sticky top-0 z-10 border-b-2 border-border bg-background/80 backdrop-blur-sm">
       <nav className="mx-auto flex max-w-4xl flex-col gap-3 px-6 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
@@ -16,16 +21,30 @@ export function Header() {
           Portfolio
         </Link>
         <ul className="flex flex-wrap gap-x-4 gap-y-1 font-mono text-xs tracking-wide uppercase sm:tracking-wider">
-          {links.map((link) => (
-            <li key={link.href}>
-              <Link
-                href={link.href}
-                className="text-muted transition-colors hover:text-accent focus-visible:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-              >
-                {link.label}
-              </Link>
-            </li>
-          ))}
+          {links.map((link) => {
+            const isActive =
+              link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
+
+            return (
+              <li key={link.href}>
+                <Link
+                  href={link.href}
+                  aria-current={isActive ? "page" : undefined}
+                  className={`group relative inline-block py-1 transition-colors hover:text-accent focus-visible:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
+                    isActive ? "text-foreground" : "text-muted"
+                  }`}
+                >
+                  {link.label}
+                  <span
+                    aria-hidden="true"
+                    className={`absolute inset-x-0 -bottom-0.5 h-0.5 origin-left scale-x-0 bg-accent transition-transform duration-300 ease-out ${
+                      isActive ? "scale-x-100" : "group-hover:scale-x-100"
+                    }`}
+                  />
+                </Link>
+              </li>
+            );
+          })}
         </ul>
       </nav>
     </header>
