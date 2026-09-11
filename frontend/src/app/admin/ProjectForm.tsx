@@ -4,11 +4,12 @@ import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { createProject, updateProject } from "@/lib/api";
 import type { Project } from "@/types/project";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { Label } from "@/components/ui/Label";
+import { Textarea } from "@/components/ui/Textarea";
 
 type ProjectFormProps = { mode: "create" } | { mode: "edit"; project: Project };
-
-const inputClassName =
-  "rounded-md border border-black/[.08] px-3 py-2 disabled:opacity-50 dark:border-white/[.145] dark:bg-transparent";
 
 export function ProjectForm(props: ProjectFormProps) {
   const router = useRouter();
@@ -63,93 +64,71 @@ export function ProjectForm(props: ProjectFormProps) {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       <div className="flex flex-col gap-1">
-        <label htmlFor="slug" className="text-sm font-medium">
-          Slug
-        </label>
-        <input
+        <Label htmlFor="slug">Slug</Label>
+        <Input
           id="slug"
           value={slug}
           onChange={(event) => setSlug(event.target.value)}
           disabled={props.mode === "edit"}
           required
-          className={inputClassName}
         />
       </div>
 
       <div className="flex flex-col gap-1">
-        <label htmlFor="title" className="text-sm font-medium">
-          Titre
-        </label>
-        <input
+        <Label htmlFor="title">Titre</Label>
+        <Input
           id="title"
           value={title}
           onChange={(event) => setTitle(event.target.value)}
           required
-          className={inputClassName}
         />
       </div>
 
       <div className="flex flex-col gap-1">
-        <label htmlFor="description" className="text-sm font-medium">
-          Description
-        </label>
-        <textarea
+        <Label htmlFor="description">Description</Label>
+        <Textarea
           id="description"
           value={description}
           onChange={(event) => setDescription(event.target.value)}
           required
           rows={4}
-          className={inputClassName}
         />
       </div>
 
       <div className="flex flex-col gap-1">
-        <label htmlFor="stack" className="text-sm font-medium">
-          Stack (séparée par des virgules)
-        </label>
-        <input
+        <Label htmlFor="stack">Stack (séparée par des virgules)</Label>
+        <Input
           id="stack"
           value={stack}
           onChange={(event) => setStack(event.target.value)}
           required
           placeholder="Next.js, Spring Boot, PostgreSQL"
-          className={inputClassName}
         />
       </div>
 
       <div className="flex flex-col gap-1">
-        <label htmlFor="repoUrl" className="text-sm font-medium">
-          Lien du repo (optionnel)
-        </label>
-        <input
+        <Label htmlFor="repoUrl">Lien du repo (optionnel)</Label>
+        <Input
           id="repoUrl"
           value={repoUrl}
           onChange={(event) => setRepoUrl(event.target.value)}
-          className={inputClassName}
         />
       </div>
 
       <div className="flex flex-col gap-1">
-        <label htmlFor="demoUrl" className="text-sm font-medium">
-          Lien de démo (optionnel)
-        </label>
-        <input
+        <Label htmlFor="demoUrl">Lien de démo (optionnel)</Label>
+        <Input
           id="demoUrl"
           value={demoUrl}
           onChange={(event) => setDemoUrl(event.target.value)}
-          className={inputClassName}
         />
       </div>
 
       {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
 
-      <button
-        type="submit"
-        disabled={isSubmitting}
-        className="w-fit rounded-full bg-accent px-5 py-3 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent/90 disabled:opacity-50"
-      >
+      <Button type="submit" disabled={isSubmitting} className="w-fit">
         {isSubmitting ? "Enregistrement..." : props.mode === "create" ? "Créer" : "Enregistrer"}
-      </button>
+      </Button>
     </form>
   );
 }

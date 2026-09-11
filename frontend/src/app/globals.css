@@ -17,6 +17,8 @@
   --border: rgba(20, 20, 26, 0.1);
   --accent: #4d6b00;
   --accent-foreground: #fafaf9;
+  --accent-glow: color-mix(in srgb, var(--accent) 22%, transparent);
+  --hero-from: var(--background);
 }
 
 @theme inline {
@@ -38,6 +40,7 @@
     --border: rgba(237, 237, 234, 0.14);
     --accent: #ccff33;
     --accent-foreground: #0a0a0b;
+    --hero-from: #1c1c20;
   }
 }
 

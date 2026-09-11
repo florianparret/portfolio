@@ -5,9 +5,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { submitContactMessage } from "@/lib/api";
 import { contactFormSchema, type ContactFormValues } from "@/lib/contact-schema";
-
-const inputClassName =
-  "rounded-md border border-black/[.08] px-3 py-2 dark:border-white/[.145] dark:bg-transparent";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { Label } from "@/components/ui/Label";
+import { Textarea } from "@/components/ui/Textarea";
 
 export default function ContactPage() {
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
@@ -36,45 +37,37 @@ export default function ContactPage() {
     <section className="relative flex flex-1 flex-col overflow-hidden">
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_85%_15%,rgba(79,70,229,0.10),transparent_45%)] dark:bg-[radial-gradient(circle_at_85%_15%,rgba(129,140,248,0.14),transparent_45%)]"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_85%_15%,var(--accent-glow),transparent_45%)]"
       />
       <div className="relative mx-auto flex w-full max-w-xl flex-1 flex-col justify-center gap-6 px-6 py-24">
-        <h1 className="text-3xl font-semibold tracking-tight">Contact</h1>
-        <p className="text-zinc-600 dark:text-zinc-400">
-          Une question, une opportunité ? Écrivez-moi.
+        <p className="font-mono text-xs tracking-widest text-accent uppercase">
+          Contact
         </p>
+        <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
+          Discutons
+        </h1>
+        <p className="text-muted">Une question, une opportunité ? Écrivez-moi.</p>
 
         <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-4">
           <div className="flex flex-col gap-1">
-            <label htmlFor="name" className="text-sm font-medium">
-              Nom
-            </label>
-            <input id="name" {...register("name")} className={inputClassName} />
+            <Label htmlFor="name">Nom</Label>
+            <Input id="name" {...register("name")} />
             {errors.name && (
               <p className="text-sm text-red-600 dark:text-red-400">{errors.name.message}</p>
             )}
           </div>
 
           <div className="flex flex-col gap-1">
-            <label htmlFor="email" className="text-sm font-medium">
-              Email
-            </label>
-            <input id="email" type="email" {...register("email")} className={inputClassName} />
+            <Label htmlFor="email">Email</Label>
+            <Input id="email" type="email" {...register("email")} />
             {errors.email && (
               <p className="text-sm text-red-600 dark:text-red-400">{errors.email.message}</p>
             )}
           </div>
 
           <div className="flex flex-col gap-1">
-            <label htmlFor="message" className="text-sm font-medium">
-              Message
-            </label>
-            <textarea
-              id="message"
-              rows={5}
-              {...register("message")}
-              className={inputClassName}
-            />
+            <Label htmlFor="message">Message</Label>
+            <Textarea id="message" rows={5} {...register("message")} />
             {errors.message && (
               <p className="text-sm text-red-600 dark:text-red-400">{errors.message.message}</p>
             )}
@@ -91,13 +84,9 @@ export default function ContactPage() {
             </p>
           )}
 
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="w-fit rounded-full bg-accent px-5 py-3 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent/90 disabled:opacity-50"
-          >
+          <Button type="submit" disabled={isSubmitting} className="w-fit">
             {isSubmitting ? "Envoi..." : "Envoyer"}
-          </button>
+          </Button>
         </form>
       </div>
     </section>

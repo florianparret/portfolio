@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { fetchProject } from "@/lib/api";
+import { Badge } from "@/components/ui/Badge";
+import { LinkButton } from "@/components/ui/LinkButton";
 
 type ProjectDetailPageProps = {
   params: Promise<{ slug: string }>;
@@ -35,52 +37,51 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
     <section className="relative flex flex-1 flex-col overflow-hidden">
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_15%_10%,rgba(79,70,229,0.10),transparent_45%)] dark:bg-[radial-gradient(circle_at_15%_10%,rgba(129,140,248,0.14),transparent_45%)]"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_15%_10%,var(--accent-glow),transparent_45%)]"
       />
       <div className="relative mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 px-6 py-24">
         <Link
           href="/projects"
-          className="w-fit text-sm text-zinc-500 transition-colors hover:text-accent dark:text-zinc-500"
+          className="w-fit font-mono text-xs tracking-wide text-muted uppercase transition-colors hover:text-accent focus-visible:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
         >
           ← Retour aux projets
         </Link>
 
-        <h1 className="text-3xl font-semibold tracking-tight">{project.title}</h1>
+        <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
+          {project.title}
+        </h1>
 
-        <ul className="flex flex-wrap gap-2 text-xs">
+        <ul className="flex flex-wrap gap-2">
           {project.stack.map((tech) => (
-            <li
-              key={tech}
-              className="rounded-full border border-accent/20 bg-accent/10 px-3 py-1 font-medium text-accent"
-            >
-              {tech}
+            <li key={tech}>
+              <Badge>{tech}</Badge>
             </li>
           ))}
         </ul>
 
-        <p className="text-lg text-zinc-600 dark:text-zinc-400">{project.description}</p>
+        <p className="text-lg text-muted">{project.description}</p>
 
         {(project.repoUrl || project.demoUrl) && (
           <div className="flex flex-wrap gap-3 pt-2">
             {project.repoUrl && (
-              <a
+              <LinkButton
                 href={project.repoUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-full border border-black/[.08] px-5 py-3 text-sm font-medium transition-colors hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a]"
+                variant="secondary"
               >
                 Voir le code →
-              </a>
+              </LinkButton>
             )}
             {project.demoUrl && (
-              <a
+              <LinkButton
                 href={project.demoUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-full bg-accent px-5 py-3 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent/90"
+                variant="primary"
               >
                 Voir la démo →
-              </a>
+              </LinkButton>
             )}
           </div>
         )}
