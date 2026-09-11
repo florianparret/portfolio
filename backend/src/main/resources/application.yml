@@ -14,3 +14,14 @@ spring:
 
 server:
   port: 8080
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:changeme-dev-secret-please-32-chars-min}
+    expiration-minutes: 60
+  admin:
+    username: ${ADMIN_USERNAME:admin}
+    # hash bcrypt du mot de passe de dev "changeme" — à changer en production
+    password-hash: ${ADMIN_PASSWORD_HASH:$2a$10$hTnN/c/pa8yzMjhqjmYKtuytkXJIKBfGcJ5M3jvvvTNkKa4m9rqeC}
+  cors:
+    allowed-origin: ${CORS_ALLOWED_ORIGIN:http://localhost:3000}
