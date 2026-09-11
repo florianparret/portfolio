@@ -30,6 +30,22 @@ découplée frontend/backend.
 services séparés resterait possible plus tard si un vrai besoin apparaissait, mais ce n'est pas
 l'objectif de ce projet.
 
+## D4 — Palette dark-first avec deux teintes d'accent (clair/sombre)
+
+**Contexte** : refonte du design vers une direction éditoriale sombre premium, avec un accent
+citron/lime vif pour se démarquer d'une palette "indigo par défaut". Le mode clair reste supporté
+(respect de `prefers-color-scheme`), gratuit en accessibilité.
+**Alternative envisagée** : une seule teinte d'accent partagée entre les deux thèmes, plus simple à
+maintenir.
+**Décision** : deux valeurs distinctes pour `--accent` selon le thème (`#4d6b00` en clair, `#ccff33`
+en sombre), choisies après calcul des ratios de contraste WCAG plutôt qu'à l'œil. Le citron vif est
+illisible comme texte sur fond clair (~1.1:1) ; seule une variante olive plus foncée passe le seuil
+AA (4.5:1) en clair, alors que le citron vif est nécessaire pour un rendu "premium" en sombre (et y
+atteint 16.89:1). Mêmes calculs pour `--foreground`/`--muted` (>16:1 et >6:1 dans les deux thèmes).
+**Conséquences** : légèrement plus de valeurs à maintenir dans `globals.css`, mais contraste garanti
+et vérifiable dans les deux thèmes plutôt que supposé ; le même principe (une valeur par thème)
+existait déjà avant cette refonte pour `--accent`, ce n'est pas un nouveau pattern.
+
 ---
 
 _Ce fichier est complété au fil des phases, à chaque décision technique qui mérite d'être

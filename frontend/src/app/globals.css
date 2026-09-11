@@ -1,15 +1,29 @@
 @import "tailwindcss";
 
+/*
+ * Palette éditoriale dark-first. Valeurs choisies puis vérifiées au ratio de
+ * contraste WCAG (voir DECISIONS.md) plutôt qu'à l'œil :
+ *   - texte principal sur fond : >16:1 dans les deux thèmes (AAA)
+ *   - texte atténué (--muted) sur fond : >6:1 dans les deux thèmes (AAA)
+ *   - accent utilisé comme texte/bordure sur fond : 5.88:1 (clair, AA) et
+ *     16.89:1 (sombre, AAA). L'accent citron vif n'est PAS lisible comme
+ *     texte sur fond clair (~1.1:1) : d'où deux teintes différentes selon
+ *     le thème, comme pour le reste de la palette.
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-  --accent: #4f46e5;
-  --accent-foreground: #ffffff;
+  --background: #fafaf9;
+  --foreground: #14141a;
+  --muted: #5c5c58;
+  --border: rgba(20, 20, 26, 0.1);
+  --accent: #4d6b00;
+  --accent-foreground: #fafaf9;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --font-sans: var(--font-geist-sans);
@@ -18,10 +32,12 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-    --accent: #818cf8;
-    --accent-foreground: #0a0a0a;
+    --background: #0a0a0b;
+    --foreground: #ededea;
+    --muted: #a3a39c;
+    --border: rgba(237, 237, 234, 0.14);
+    --accent: #ccff33;
+    --accent-foreground: #0a0a0b;
   }
 }
 
@@ -34,7 +50,7 @@ body {
   );
   background-size: 22px 22px;
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
 }
 
 @keyframes page-transition-in {
