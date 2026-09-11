@@ -1,3 +1,4 @@
+import type { ContactFormValues } from "@/lib/contact-schema";
 import type { Project } from "@/types/project";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
@@ -103,6 +104,20 @@ export async function deleteProject(slug: string): Promise<boolean> {
     const response = await fetch(`${API_BASE_URL}/api/projects/${slug}`, {
       method: "DELETE",
       credentials: "include",
+    });
+
+    return response.ok;
+  } catch {
+    return false;
+  }
+}
+
+export async function submitContactMessage(data: ContactFormValues): Promise<boolean> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/contact`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
     });
 
     return response.ok;

@@ -18,5 +18,9 @@ describe("Header", () => {
       "href",
       "/projects",
     );
+    expect(screen.getByRole("link", { name: "Contact" })).toHaveAttribute(
+      "href",
+      "/contact",
+    );
   });
 });
