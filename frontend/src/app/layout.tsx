@@ -15,9 +15,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Portfolio — Full-Stack Java / React",
+  title: "Florian Parret — Portfolio Full-Stack",
   description:
-    "Portfolio personnel full-stack : Next.js (frontend) et Spring Boot (backend).",
+    "Portfolio personnel full-stack de Florian Parret : Next.js (frontend) et Spring Boot (backend).",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

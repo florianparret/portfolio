@@ -4,13 +4,20 @@ import Home from "./page";
 import { profile } from "@/lib/mock-data";
 
 describe("Home page", () => {
-  it("affiche le titre et l'intro du profil", () => {
+  it("affiche le nom, le titre et l'intro du profil", () => {
     render(<Home />);
 
     expect(
-      screen.getByRole("heading", { level: 1, name: profile.title }),
+      screen.getByRole("heading", { level: 1, name: profile.name }),
     ).toBeInTheDocument();
+    expect(screen.getByText(profile.title)).toBeInTheDocument();
     expect(screen.getByText(profile.intro)).toBeInTheDocument();
+  });
+
+  it("affiche la photo de profil", () => {
+    render(<Home />);
+
+    expect(screen.getByRole("img", { name: profile.name })).toBeInTheDocument();
   });
 
   it("propose un lien vers la page des projets", () => {

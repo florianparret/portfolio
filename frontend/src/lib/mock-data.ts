@@ -1,6 +1,7 @@
 import type { Project } from "@/types/project";
 
 export const profile = {
+  name: "Florian Parret",
   title: "Développeur Full-Stack Java / React",
   intro:
     "Portfolio personnel construit comme une vraie application full-stack : Next.js côté frontend, Spring Boot et PostgreSQL côté backend.",
