@@ -5,9 +5,9 @@ Ce document décrit le workflow Git et les conventions à suivre.
 
 ## Branches
 
-- `master` — branche de production. Toujours stable, déployable.
+- `main` — branche de production. Toujours stable, déployable.
 - `dev` — branche d'intégration. Les fonctionnalités validées y sont fusionnées avant d'être
-  éventuellement passées sur `master`.
+  éventuellement passées sur `main`.
 - `feature/<nom>` — une branche par ticket ou fonctionnalité, créée depuis `dev`.
   Exemple : `feature/frontend-init`.
 - `fix/<nom>` — pour un correctif ciblé, même logique que `feature/*`.
@@ -19,7 +19,7 @@ Ce document décrit le workflow Git et les conventions à suivre.
    même lot de commits.
 3. Ouvrir une Pull Request vers `dev`. Relire le diff avant de fusionner.
 4. Une fois `dev` stabilisée sur un ensemble cohérent de fonctionnalités, fusionner `dev` dans
-   `master` pour une mise en production.
+   `main` pour une mise en production.
 
 ## Commits
 
