@@ -1,0 +1,2 @@
+-- Migration initiale : valide le câblage Flyway. Aucune table métier pour l'instant,
+-- elles arriveront avec les tickets suivants (ex. entité Project).
