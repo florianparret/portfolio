@@ -146,7 +146,7 @@ export function ProjectForm(props: ProjectFormProps) {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-fit rounded-full bg-foreground px-5 py-3 text-sm font-medium text-background transition-colors hover:bg-[#383838] disabled:opacity-50 dark:hover:bg-[#ccc]"
+        className="w-fit rounded-full bg-accent px-5 py-3 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent/90 disabled:opacity-50"
       >
         {isSubmitting ? "Enregistrement..." : props.mode === "create" ? "Créer" : "Enregistrer"}
       </button>
