@@ -40,6 +40,9 @@ describe("Projects page", () => {
         screen.getByRole("heading", { level: 2, name: project.title }),
       ).toBeInTheDocument();
       expect(screen.getByText(project.description)).toBeInTheDocument();
+      expect(
+        screen.getByRole("link", { name: new RegExp(project.title) }),
+      ).toHaveAttribute("href", `/projects/${project.slug}`);
     }
   });
 
