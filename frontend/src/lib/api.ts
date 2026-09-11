@@ -22,3 +22,29 @@ export async function fetchProjects(): Promise<FetchProjectsResult> {
     return { success: false };
   }
 }
+
+export async function login(username: string, password: string): Promise<boolean> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ username, password }),
+    });
+
+    return response.ok;
+  } catch {
+    return false;
+  }
+}
+
+export async function logout(): Promise<void> {
+  try {
+    await fetch(`${API_BASE_URL}/api/auth/logout`, {
+      method: "POST",
+      credentials: "include",
+    });
+  } catch {
+    // pas d'action utile si le backend est déjà injoignable : on redirige quand même
+  }
+}
