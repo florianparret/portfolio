@@ -1,5 +1,3 @@
-import type { Project } from "@/types/project";
-
 export const profile = {
   name: "Florian Parret",
   title: "Développeur Full-Stack Java / React",
@@ -14,20 +12,3 @@ export const aboutContent = {
     "Stack principale : Next.js (TypeScript, Tailwind) côté frontend, Spring Boot (Java 21, PostgreSQL, Flyway) côté backend.",
   ],
 };
-
-export const projects: Project[] = [
-  {
-    slug: "portfolio",
-    title: "Portfolio Full-Stack",
-    description:
-      "Ce portfolio lui-même : Next.js + Spring Boot, architecture découplée, authentification JWT pour la partie admin.",
-    stack: ["Next.js", "TypeScript", "Spring Boot", "PostgreSQL"],
-  },
-  {
-    slug: "suivi-candidatures",
-    title: "Suivi de candidatures (à venir)",
-    description:
-      "Application de suivi de candidatures, pensée comme prochaine brique ajoutée à ce portfolio.",
-    stack: ["Next.js", "Spring Boot"],
-  },
-];
