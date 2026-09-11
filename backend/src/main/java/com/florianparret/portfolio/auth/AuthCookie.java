@@ -14,7 +14,11 @@ final class AuthCookie {
         return ResponseCookie.from(NAME, token)
                 .httpOnly(true)
                 .secure(true)
-                .sameSite("Strict")
+                // SameSite=None (et non Strict) car le frontend (Vercel) et le backend (Render)
+                // vivent sur deux domaines différents en production : un cookie Strict ne serait
+                // jamais envoyé sur les appels cross-site du frontend vers l'API. La protection
+                // CSRF repose à la place sur la configuration CORS (cf. SecurityConfig).
+                .sameSite("None")
                 .path("/")
                 .maxAge(maxAge)
                 .build();
