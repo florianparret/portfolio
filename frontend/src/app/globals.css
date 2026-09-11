@@ -36,3 +36,41 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+@keyframes page-transition-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.page-transition {
+  animation: page-transition-in 0.4s ease-out;
+}
+
+@keyframes page-transition-glow {
+  0% {
+    opacity: 0;
+  }
+  35% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.page-transition-glow {
+  animation: page-transition-glow 0.6s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-transition,
+  .page-transition-glow {
+    animation: none;
+  }
+}
