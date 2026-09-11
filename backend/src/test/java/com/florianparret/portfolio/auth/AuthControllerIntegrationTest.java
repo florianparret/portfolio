@@ -37,7 +37,7 @@ class AuthControllerIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(header().string(HttpHeaders.SET_COOKIE, containsString("auth_token=")))
                 .andExpect(header().string(HttpHeaders.SET_COOKIE, containsString("HttpOnly")))
-                .andExpect(header().string(HttpHeaders.SET_COOKIE, containsString("SameSite=Strict")));
+                .andExpect(header().string(HttpHeaders.SET_COOKIE, containsString("SameSite=None")));
     }
 
     @Test
