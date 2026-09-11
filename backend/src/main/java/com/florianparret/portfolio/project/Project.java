@@ -76,4 +76,12 @@ public class Project {
     public String getDemoUrl() {
         return demoUrl;
     }
+
+    public void update(String title, String description, List<String> stack, String repoUrl, String demoUrl) {
+        this.title = title;
+        this.description = description;
+        this.stack = stack;
+        this.repoUrl = repoUrl;
+        this.demoUrl = demoUrl;
+    }
 }
