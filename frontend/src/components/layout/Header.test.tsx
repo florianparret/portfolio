@@ -1,6 +1,10 @@
 import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { Header } from "./Header";
+
+vi.mock("next/navigation", () => ({
+  usePathname: () => "/projects",
+}));
 
 describe("Header", () => {
   it("affiche les liens de navigation principaux", () => {
@@ -22,5 +26,17 @@ describe("Header", () => {
       "href",
       "/contact",
     );
+  });
+
+  it("marque le lien correspondant à la page courante comme actif", () => {
+    render(<Header />);
+
+    expect(screen.getByRole("link", { name: "Projets" })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
+    expect(
+      screen.getByRole("link", { name: "Accueil" }),
+    ).not.toHaveAttribute("aria-current");
   });
 });
