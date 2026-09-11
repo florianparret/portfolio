@@ -1,5 +1,8 @@
 # Portfolio Full-Stack — Java / React
 
+[![Backend CI](https://github.com/florianparret/portfolio/actions/workflows/backend-ci.yml/badge.svg)](https://github.com/florianparret/portfolio/actions/workflows/backend-ci.yml)
+[![Frontend CI](https://github.com/florianparret/portfolio/actions/workflows/frontend-ci.yml/badge.svg)](https://github.com/florianparret/portfolio/actions/workflows/frontend-ci.yml)
+
 ## 1. Présentation
 
 Portfolio personnel et premier projet démontrable, construit comme une vraie application full-stack
