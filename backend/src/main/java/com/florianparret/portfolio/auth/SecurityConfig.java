@@ -46,8 +46,11 @@ public class SecurityConfig {
             RestAuthenticationEntryPoint restAuthenticationEntryPoint)
             throws Exception {
         http.cors(cors -> cors.configurationSource(corsConfigurationSource))
-                // CSRF classique désactivé : le cookie JWT est SameSite=Strict, ce qui empêche
-                // déjà le navigateur de l'envoyer sur une requête cross-site.
+                // CSRF classique désactivé : le cookie JWT est SameSite=None (nécessaire en
+                // cross-domain, cf. AuthCookie), donc la protection vient plutôt du CORS
+                // ci-dessus, restreint à une seule origine explicite (pas de wildcard) et à un
+                // en-tête Content-Type qui force un preflight — un site tiers ne peut donc pas
+                // déclencher une requête JSON authentifiée vers l'API.
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(exceptions -> exceptions.authenticationEntryPoint(restAuthenticationEntryPoint))
