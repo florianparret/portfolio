@@ -46,6 +46,61 @@ atteint 16.89:1). Mêmes calculs pour `--foreground`/`--muted` (>16:1 et >6:1 da
 et vérifiable dans les deux thèmes plutôt que supposé ; le même principe (une valeur par thème)
 existait déjà avant cette refonte pour `--accent`, ce n'est pas un nouveau pattern.
 
+## D5 — Cookie `SameSite=None` plutôt que `Strict` pour l'auth cross-domain
+
+**Contexte** : frontend (Vercel) et backend (Render) déployés sur deux domaines distincts. Le
+cookie JWT était en `SameSite=Strict`, qui empêche le navigateur de l'envoyer sur toute requête
+cross-site — y compris les appels `fetch` légitimes du frontend vers l'API.
+**Alternative envisagée** : proxy Next.js (`rewrites()` dans `next.config.ts`) pour que le
+navigateur ne parle qu'à un seul domaine, gardant `Strict`. Plus robuste mais ajoute une brique
+d'infra (le frontend relaie chaque appel API) pour un projet solo à faible trafic.
+**Décision** : `SameSite=None` + `Secure` (déjà en place). La protection CSRF ne repose plus sur
+`SameSite` mais sur le CORS existant : origine unique explicite (pas de wildcard), `credentials`
+activés, et `allowedHeaders` restreint à `Content-Type` — ce qui force un preflight sur toute
+requête JSON cross-site, qu'un navigateur bloque si l'origine ne correspond pas exactement.
+**Conséquences** : fonctionne en cross-domain réel ; `CORS_ALLOWED_ORIGIN` doit rester
+scrupuleusement synchronisé avec le domaine frontend réel (un domaine Vercel alternatif non listé
+casse silencieusement le login, cf. `DEPLOYMENT.md` §7.3).
+
+## D6 — Vérification de session admin côté client plutôt que middleware Vercel
+
+**Contexte** : le middleware Vercel (`proxy.ts`) protégeait `/admin/*` en vérifiant la présence du
+cookie `auth_token` sur la requête entrante. Ce cookie est posé par le backend et scopé à son seul
+host (Render) : l'edge Vercel ne peut structurellement jamais le voir en cross-domain (ça
+fonctionnait en local seulement parce que `localhost:3000`/`:8080` partagent le même host).
+**Alternative envisagée** : le proxy Next.js évoqué en D5 aurait aussi réglé ce problème (tout
+redevient same-origin), au prix de la même complexité d'infra supplémentaire.
+**Décision** : suppression de `proxy.ts` ; ajout d'un endpoint `GET /api/auth/session`
+(authentifié, 401 sinon) et d'un composant client `AdminGuard` qui l'appelle directement au
+chargement des pages admin, redirigeant vers `/admin/login` en cas de 401.
+**Conséquences** : la vraie frontière de sécurité (les mutations `POST/PUT/DELETE /api/projects`
+exigent déjà une authentification côté backend) n'a jamais été affectée par ce bug — seul le
+redirect de confort l'était. Limite connue et acceptée : le contenu des pages admin passe par le
+rendu serveur avant que le garde-fou client ne s'applique, mais ces pages n'affichent que des
+données déjà publiques (la liste des projets, identique à `/projects`), donc sans impact réel.
+
+## D7 — Formulaire de contact : `spring-boot-starter-mail` + rate limiting + honeypot
+
+**Contexte** : `POST /api/contact` est un endpoint public non authentifié. Avant d'y brancher un
+envoi d'email vers une boîte personnelle, deux risques réels à couvrir : le spam de la boîte mail
+(coût quasi nul pour un bot, gênant en pratique) et l'épuisement d'un quota d'envoi.
+**Alternative envisagée** : un service d'email transactionnel tiers (Resend, Brevo...) — API plus
+propre, mais nouveau compte externe et nouvelle dépendance pour un besoin que Spring couvre déjà
+nativement. CAPTCHA (Turnstile/hCaptcha) écarté pour l'instant : efficace mais dépendance tierce et
+friction supplémentaire pour un formulaire de contact personnel à faible trafic — à reconsidérer
+si le spam devient un problème réel.
+**Décision** : `spring-boot-starter-mail` (SMTP Gmail), envoi asynchrone et best-effort (un échec
+SMTP est loggé, jamais renvoyé au visiteur — le message est de toute façon déjà persisté). Deux
+mitigations anti-spam sans dépendance externe : un champ honeypot (`ContactRequest.website`,
+invisible pour un humain, silencieusement ignoré s'il est rempli) et un rate limiter en mémoire par
+IP (5 tentatives/heure).
+**Conséquences** : `server.forward-headers-strategy=framework` nécessaire pour que le rate
+limiter voie la vraie IP du visiteur derrière le proxy Render, sinon tout le monde partagerait la
+même IP apparente. `management.health.mail.enabled=false` nécessaire pour qu'un SMTP mal
+configuré ne fasse pas passer `/actuator/health` à DOWN (cf. `DEPLOYMENT.md` §7.5). Limite
+acceptée : l'état du rate limiter est perdu à chaque redémarrage de l'instance (tier gratuit
+Render) — non bloquant pour ce niveau de trafic, migrerait vers un store partagé sinon.
+
 ---
 
 _Ce fichier est complété au fil des phases, à chaque décision technique qui mérite d'être

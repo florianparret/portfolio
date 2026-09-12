@@ -9,7 +9,7 @@ Portfolio personnel et premier projet démontrable, construit comme une vraie ap
 (pas un site statique). Il présente mon profil, mon parcours et mes projets, et sert de socle pour
 en ajouter d'autres au fil du temps (ex. application de suivi de candidatures).
 
-- Démo : _à venir_
+- Démo : [portfolio-flo-parret.vercel.app](https://portfolio-flo-parret.vercel.app)
 - Contexte, objectifs et choix techniques détaillés : voir la page projet correspondante une fois
   le contenu publié, et `DECISIONS.md` pour le détail des arbitrages techniques.
 
@@ -75,8 +75,9 @@ _À compléter au fur et à mesure des phases._
 
 ## 8. Déploiement
 
-_À compléter en Phase 10._ Cible : frontend sur Vercel, backend + PostgreSQL sur une plateforme
-type Railway/Render/Fly.io.
+Frontend sur Vercel, backend + PostgreSQL sur Render — déploiement automatique sur push vers
+`main`. Détail complet (architecture, variables d'environnement, procédure, incidents rencontrés) :
+voir `DEPLOYMENT.md`.
 
 ## 9. Décisions techniques
 
