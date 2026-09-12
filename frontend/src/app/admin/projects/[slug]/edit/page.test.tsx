@@ -14,6 +14,7 @@ const fetchProjectMock = vi.fn();
 vi.mock("@/lib/api", () => ({
   fetchProject: (slug: string) => fetchProjectMock(slug),
   updateProject: vi.fn(),
+  checkSession: vi.fn().mockResolvedValue(true),
 }));
 
 describe("Edit project page", () => {
@@ -31,7 +32,7 @@ describe("Edit project page", () => {
     render(element);
 
     expect(
-      screen.getByRole("heading", { level: 1, name: "Modifier « Portfolio »" }),
+      await screen.findByRole("heading", { level: 1, name: "Modifier « Portfolio »" }),
     ).toBeInTheDocument();
     expect(screen.getByLabelText("Slug")).toBeDisabled();
     expect(screen.getByLabelText("Titre")).toHaveValue("Portfolio");

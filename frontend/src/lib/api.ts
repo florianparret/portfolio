@@ -39,6 +39,19 @@ export async function login(username: string, password: string): Promise<boolean
   }
 }
 
+export async function checkSession(): Promise<boolean> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/auth/session`, {
+      credentials: "include",
+      cache: "no-store",
+    });
+
+    return response.ok;
+  } catch {
+    return false;
+  }
+}
+
 export async function logout(): Promise<void> {
   try {
     await fetch(`${API_BASE_URL}/api/auth/logout`, {

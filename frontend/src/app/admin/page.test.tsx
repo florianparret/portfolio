@@ -12,6 +12,7 @@ vi.mock("@/lib/api", () => ({
   logout: vi.fn(),
   deleteProject: vi.fn(),
   fetchProjects: () => fetchProjectsMock(),
+  checkSession: vi.fn().mockResolvedValue(true),
 }));
 
 const mockProjects = [
@@ -30,7 +31,7 @@ describe("Admin page", () => {
     render(await AdminPage());
 
     expect(
-      screen.getByRole("heading", { level: 1, name: "Espace admin" }),
+      await screen.findByRole("heading", { level: 1, name: "Espace admin" }),
     ).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: "Se déconnecter" }),
@@ -45,7 +46,7 @@ describe("Admin page", () => {
 
     render(await AdminPage());
 
-    expect(screen.getByText("Portfolio")).toBeInTheDocument();
+    expect(await screen.findByText("Portfolio")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Modifier" })).toHaveAttribute(
       "href",
       "/admin/projects/portfolio/edit",
@@ -58,7 +59,7 @@ describe("Admin page", () => {
 
     render(await AdminPage());
 
-    expect(screen.getByText("Aucun projet pour le moment.")).toBeInTheDocument();
+    expect(await screen.findByText("Aucun projet pour le moment.")).toBeInTheDocument();
   });
 
   it("affiche un message d'erreur si l'API est indisponible", async () => {
@@ -67,7 +68,7 @@ describe("Admin page", () => {
     render(await AdminPage());
 
     expect(
-      screen.getByText("Impossible de charger les projets pour le moment."),
+      await screen.findByText("Impossible de charger les projets pour le moment."),
     ).toBeInTheDocument();
   });
 });
