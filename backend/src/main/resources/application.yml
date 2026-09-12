@@ -11,9 +11,33 @@ spring:
       ddl-auto: validate
   flyway:
     enabled: true
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME:changeme@example.com}
+    password: ${MAIL_PASSWORD:changeme}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+management:
+  health:
+    # L'envoi d'email est un best-effort annexe (cf. ContactNotificationService) : un souci SMTP
+    # ne doit jamais faire passer /actuator/health à DOWN, ce qui pourrait faire croire à la
+    # plateforme d'hébergement que toute l'API est en panne.
+    mail:
+      enabled: false
 
 server:
   port: 8080
+  # Render (et son proxy Cloudflare) transmet l'IP réelle du visiteur via X-Forwarded-For ;
+  # sans ce réglage, HttpServletRequest#getRemoteAddr() renverrait toujours l'IP du proxy,
+  # ce qui casserait le rate limiting du formulaire de contact (tout le monde partagerait la
+  # même IP apparente).
+  forward-headers-strategy: framework
 
 app:
   jwt:
@@ -25,3 +49,5 @@ app:
     password-hash: ${ADMIN_PASSWORD_HASH:$2a$10$hTnN/c/pa8yzMjhqjmYKtuytkXJIKBfGcJ5M3jvvvTNkKa4m9rqeC}
   cors:
     allowed-origin: ${CORS_ALLOWED_ORIGIN:http://localhost:3000}
+  contact:
+    notification-email: ${CONTACT_NOTIFICATION_EMAIL:changeme@example.com}

@@ -87,6 +87,18 @@ class ContactControllerIntegrationTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @Test
+    void honeypotFilledReturns201ButDoesNotPersistAnything() throws Exception {
+        String json =
+                """
+                {"name":"Bot","email":"bot@example.com","message":"spam","website":"http://spam.example"}""";
+
+        mockMvc.perform(post("/api/contact").contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isCreated());
+
+        assertThat(contactMessageRepository.findAll()).isEmpty();
+    }
+
     private static String contactJson(String name, String email, String message) {
         return "{\"name\":\"%s\",\"email\":\"%s\",\"message\":\"%s\"}".formatted(name, email, message);
     }

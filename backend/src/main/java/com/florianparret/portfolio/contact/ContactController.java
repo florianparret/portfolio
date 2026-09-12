@@ -1,5 +1,6 @@
 package com.florianparret.portfolio.contact;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,7 +21,7 @@ public class ContactController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void submit(@Valid @RequestBody ContactRequest request) {
-        contactService.submit(request);
+    public void submit(@Valid @RequestBody ContactRequest request, HttpServletRequest httpRequest) {
+        contactService.submit(request, httpRequest.getRemoteAddr());
     }
 }
