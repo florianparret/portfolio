@@ -8,6 +8,8 @@ export const contactFormSchema = z.object({
     .trim()
     .min(1, "Le message est requis.")
     .max(2000, "Le message est limité à 2000 caractères."),
+  // Honeypot anti-spam : champ invisible pour un visiteur humain, que seul un bot remplirait.
+  website: z.string().optional(),
 });
 
 export type ContactFormValues = z.infer<typeof contactFormSchema>;

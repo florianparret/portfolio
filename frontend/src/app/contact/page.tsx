@@ -45,6 +45,18 @@ export default function ContactPage() {
         <p className="text-muted">Une question, une opportunité ? Écrivez-moi.</p>
 
         <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-4">
+          {/* Honeypot anti-spam : invisible et ignoré des lecteurs d'écran, seul un bot le remplit. */}
+          <div aria-hidden="true" className="absolute left-[-9999px]" tabIndex={-1}>
+            <label htmlFor="website">Site web</label>
+            <input
+              id="website"
+              type="text"
+              tabIndex={-1}
+              autoComplete="off"
+              {...register("website")}
+            />
+          </div>
+
           <div className="flex flex-col gap-1">
             <Label htmlFor="name">Nom</Label>
             <Input id="name" {...register("name")} />

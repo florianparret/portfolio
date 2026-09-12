@@ -13,6 +13,14 @@ describe("Contact page", () => {
     submitContactMessageMock.mockReset();
   });
 
+  it("inclut un champ honeypot invisible et non focusable", () => {
+    render(<ContactPage />);
+
+    const honeypot = screen.getByLabelText("Site web");
+    expect(honeypot).toHaveAttribute("tabindex", "-1");
+    expect(honeypot.closest("[aria-hidden='true']")).not.toBeNull();
+  });
+
   it("affiche des erreurs de validation quand le formulaire est vide", async () => {
     render(<ContactPage />);
 
@@ -56,6 +64,7 @@ describe("Contact page", () => {
       name: "Jane Doe",
       email: "jane@example.com",
       message: "Bonjour, votre profil m'intéresse.",
+      website: "",
     });
   });
 
