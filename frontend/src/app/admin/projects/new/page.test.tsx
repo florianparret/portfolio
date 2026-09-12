@@ -8,14 +8,15 @@ vi.mock("next/navigation", () => ({
 
 vi.mock("@/lib/api", () => ({
   createProject: vi.fn(),
+  checkSession: vi.fn().mockResolvedValue(true),
 }));
 
 describe("New project page", () => {
-  it("affiche le titre et le formulaire en mode création", () => {
+  it("affiche le titre et le formulaire en mode création", async () => {
     render(<NewProjectPage />);
 
     expect(
-      screen.getByRole("heading", { level: 1, name: "Nouveau projet" }),
+      await screen.findByRole("heading", { level: 1, name: "Nouveau projet" }),
     ).toBeInTheDocument();
     expect(screen.getByLabelText("Slug")).not.toBeDisabled();
     expect(screen.getByRole("button", { name: "Créer" })).toBeInTheDocument();

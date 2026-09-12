@@ -55,6 +55,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(exceptions -> exceptions.authenticationEntryPoint(restAuthenticationEntryPoint))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.GET, "/api/auth/session").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/projects").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/api/projects/**").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/api/projects/**").authenticated()

@@ -1,10 +1,12 @@
 package com.florianparret.portfolio.auth;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -54,6 +56,24 @@ class AuthControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(loginJson("someone-else", "changeme")))
                 .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void sessionWithoutCookieReturns401() throws Exception {
+        mockMvc.perform(get("/api/auth/session"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void sessionWithValidCookieReturns200() throws Exception {
+        var loginResult = mockMvc.perform(post("/api/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(loginJson("admin", "changeme")))
+                .andReturn();
+        Cookie authCookie = loginResult.getResponse().getCookie("auth_token");
+
+        mockMvc.perform(get("/api/auth/session").cookie(authCookie))
+                .andExpect(status().isOk());
     }
 
     private static String loginJson(String username, String password) {
