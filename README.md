@@ -10,16 +10,17 @@ Portfolio personnel et premier projet démontrable, construit comme une vraie ap
 en ajouter d'autres au fil du temps (ex. application de suivi de candidatures).
 
 - Démo : [portfolio-flo-parret.vercel.app](https://portfolio-flo-parret.vercel.app)
-- Contexte, objectifs et choix techniques détaillés : voir la page projet correspondante une fois
-  le contenu publié, et `DECISIONS.md` pour le détail des arbitrages techniques.
+- Contexte, objectifs et choix techniques détaillés : voir la
+  [page projet correspondante](https://portfolio-flo-parret.vercel.app/projects/portfolio), et
+  `DECISIONS.md` pour le détail des arbitrages techniques.
 
 ## 2. Stack technique
 
 **Frontend** — Next.js (App Router), TypeScript (strict), React, Tailwind CSS, React Hook Form, Zod,
-TanStack Query (si pertinent), Vitest + Testing Library, Playwright.
+Vitest + Testing Library, Playwright (vérifications ponctuelles).
 
-**Backend** — Java 21, Spring Boot (Web, Data JPA, Security), PostgreSQL, Flyway, JUnit, Mockito,
-Testcontainers, springdoc-openapi.
+**Backend** — Java 21, Spring Boot (Web, Data JPA, Security, RestClient), PostgreSQL, Flyway, JJWT,
+JUnit, Testcontainers, springdoc-openapi.
 
 **DevOps** — Docker, Docker Compose (dev local), GitHub Actions.
 
@@ -56,22 +57,27 @@ cp frontend/.env.example frontend/.env.local
 | `SPRING_DATASOURCE_USERNAME` | backend | Utilisateur PostgreSQL |
 | `SPRING_DATASOURCE_PASSWORD` | backend | Mot de passe PostgreSQL |
 | `JWT_SECRET` | backend | Clé de signature des tokens JWT (dev uniquement, secret réel en prod) |
+| `ADMIN_USERNAME` / `ADMIN_PASSWORD_HASH` | backend | Identifiants du compte admin unique (hash bcrypt) |
+| `CORS_ALLOWED_ORIGIN` | backend | Origine autorisée pour les appels cross-origin du frontend |
+| `RESEND_API_KEY` / `RESEND_FROM_EMAIL` | backend | Envoi des notifications du formulaire de contact via l'API Resend |
+| `CONTACT_NOTIFICATION_EMAIL` | backend | Destinataire des notifications du formulaire de contact |
 | `NEXT_PUBLIC_API_URL` | frontend | URL de base de l'API backend |
 
-Voir `backend/.env.example` et `frontend/.env.example` pour le détail.
+Voir `backend/.env.example` et `frontend/.env.example` pour le détail, et `DEPLOYMENT.md` pour la
+configuration en production.
 
 ## 6. Lancement local
 
-_À compléter une fois le backend et le frontend initialisés (Phase 1 et 2)._
-
-Cible : `docker compose up` pour lancer l'ensemble (Postgres + backend + frontend).
+```bash
+docker compose up -d postgres   # base de données
+cd backend && mvn spring-boot:run
+cd frontend && npm run dev
+```
 
 ## 7. Tests
 
-_À compléter au fur et à mesure des phases._
-
-- Backend : `mvn test` (unitaires), `mvn verify` (intégration avec Testcontainers)
-- Frontend : `npm run test` (Vitest), `npm run test:e2e` (Playwright)
+- Backend : `mvn test` (unitaires + intégration avec Testcontainers, nécessite Docker)
+- Frontend : `npm run test` (Vitest + Testing Library)
 
 ## 8. Déploiement
 
@@ -92,8 +98,8 @@ section importante du code est comprise et validée avant d'être committée.
 
 ## 11. Limites connues
 
-_À compléter au fur et à mesure — projet personnel en cours de construction, pas destiné à un
-usage en production à grande échelle._
+Projet personnel, pas destiné à un usage en production à grande échelle — voir `DEPLOYMENT.md`
+§8 pour le détail (cold start sur le tier gratuit Render, rate limiting en mémoire, etc.).
 
 ## 12. Améliorations futures
 
