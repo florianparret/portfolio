@@ -55,8 +55,8 @@ Un push sur une autre branche que `main` déclenche uniquement la CI GitHub (pas
 | `ADMIN_USERNAME` | ex. `admin` | non | Identifiant du compte admin unique |
 | `ADMIN_PASSWORD_HASH` | hash bcrypt (`$2a$10$...`) | **oui** | Jamais le mot de passe en clair — voir §6 pour le générer |
 | `CORS_ALLOWED_ORIGIN` | `https://portfolio-flo-parret.vercel.app` | non | Origine unique autorisée en CORS — **doit correspondre exactement** au domaine frontend réellement utilisé (voir incident §7.3) |
-| `MAIL_USERNAME` | `flo.parret@gmail.com` | non | Compte SMTP Gmail utilisé pour l'envoi |
-| `MAIL_PASSWORD` | mot de passe d'application Gmail (16 caractères) | **oui** | Jamais le mot de passe principal du compte Google |
+| `RESEND_API_KEY` | clé API Resend | **oui** | Envoi des notifications du formulaire de contact via l'API HTTPS de Resend — le SMTP direct ne fonctionne pas sur Render, voir incident §7.6 |
+| `RESEND_FROM_EMAIL` | `onboarding@resend.dev` | non | Expéditeur — domaine partagé Resend par défaut, pas de DNS à configurer |
 | `CONTACT_NOTIFICATION_EMAIL` | `flo.parret@gmail.com` | non | Destinataire des notifications du formulaire de contact |
 
 ### Frontend (Vercel → Settings → Environment Variables)
@@ -118,8 +118,8 @@ new BCryptPasswordEncoder().encode("le_mot_de_passe_choisi")
 `spring-jcl` est nécessaire sur le classpath (dépendance transitive de `spring-security-crypto`
 pour le logging) — sans lui, `NoClassDefFoundError: org/apache/commons/logging/LogFactory`.
 
-**`MAIL_PASSWORD`** — mot de passe d'application Gmail (nécessite la validation en deux étapes
-activée sur le compte) : [myaccount.google.com/apppasswords](https://myaccount.google.com/apppasswords).
+**`RESEND_API_KEY`** — créer un compte sur [resend.com](https://resend.com) (gratuit, sans carte
+bancaire) puis générer une clé API depuis le dashboard.
 
 Dans les trois cas : générer en local, coller directement dans les variables d'environnement de
 la plateforme d'hébergement, jamais dans un message ou un fichier committé.
@@ -189,8 +189,42 @@ Render : Spring Boot Actuator ajoute automatiquement un contrôle de connectivit
 invalides ou non configurés, ce contrôle échoue et fait passer *toute* la santé de l'application à
 DOWN — alors que l'envoi d'email n'est qu'un effet de bord non-critique du formulaire de contact.
 Une plateforme d'hébergement qui surveille `/actuator/health` pourrait en conclure, à tort, que
-toute l'API est en panne. **Fix** : `management.health.mail.enabled: false` dans
-`application.yml`.
+toute l'API est en panne. **Fix initial** : `management.health.mail.enabled: false`. Devenu sans
+objet après le passage à Resend (§7.6), qui a fait disparaître `spring-boot-starter-mail` — et donc
+ce contrôle de santé — du projet.
+
+### 7.6 — Le formulaire de contact ne délivre jamais l'email en production
+
+Le formulaire fonctionnait (201 renvoyé, message persisté) mais aucun email n'arrivait jamais,
+même en boîte spam. Les logs Render ont montré la vraie cause :
+```
+MailConnectException: Couldn't connect to host, port: smtp.gmail.com, 587; timeout -1;
+Caused by: java.net.ConnectException: Operation timed out
+```
+Un timeout de connexion silencieux (pas un rejet d'authentification) est la signature typique d'un
+port bloqué par la plateforme d'hébergement plutôt que d'un identifiant erroné — Render bloque les
+ports SMTP sortants (25/465/587) sur son tier gratuit, une mesure anti-spam courante chez les
+hébergeurs PaaS. Aucun réglage Spring ne peut contourner un blocage réseau de la plateforme.
+
+**Fix** : remplacement de `spring-boot-starter-mail` (SMTP) par l'API HTTPS de
+[Resend](https://resend.com) (port 443, jamais bloqué), appelée via `RestClient` — déjà disponible
+dans l'écosystème Spring, sans nouvelle dépendance de bibliothèque, seulement un nouveau compte
+externe et une clé API. Voir `DECISIONS.md` D7.
+
+### 7.7 — `RestClient.Builder` introuvable au démarrage après le passage à Resend
+
+En basculant vers `RestClient`, l'application refusait de démarrer :
+```
+Parameter 0 of constructor in ContactNotificationService required a bean of type
+'org.springframework.web.client.RestClient$Builder' that could not be found.
+```
+Contrairement aux versions antérieures de Spring Boot, la 4.x a extrait l'auto-configuration de
+`RestClient`/`RestTemplate` de `spring-boot-autoconfigure` vers un module dédié,
+`spring-boot-restclient`, absent par défaut de `spring-boot-starter-web`. **Fix** : ajouter
+explicitement `org.springframework.boot:spring-boot-restclient` en dépendance — sans ça, un test
+`@SpringBootTest` peut accidentellement passer si le module est présent transitivement côté test,
+tout en faisant échouer le vrai jar de production au démarrage (piège découvert ici en testant
+localement avant de déployer, plutôt qu'après).
 
 ## 8. Limites connues (tier gratuit)
 
@@ -202,3 +236,5 @@ toute l'API est en panne. **Fix** : `management.health.mail.enabled: false` dans
   devenait significatif.
 - **Deux domaines Vercel actifs** mais un seul autorisé en CORS (voir §7.3) — ne jamais partager
   `portfolio-theta-three-48.vercel.app`, seulement `portfolio-flo-parret.vercel.app`.
+- **Ports SMTP sortants bloqués sur Render** (voir §7.6) — toute future fonctionnalité d'envoi
+  d'email doit passer par une API HTTPS (Resend ou équivalent), jamais par du SMTP direct.
