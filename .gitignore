@@ -14,6 +14,7 @@ frontend/playwright-report/
 frontend/test-results/
 frontend/.turbo/
 frontend/npm-debug.log*
+frontend/tsconfig.tsbuildinfo
 # Auto-générés par `next dev` quand il détecte un agent IA (ex. Claude Code) ;
 # non liés à ce projet, on ne les garde pas dans le repo (garde le CLAUDE.md racine comme source unique).
 frontend/AGENTS.md
