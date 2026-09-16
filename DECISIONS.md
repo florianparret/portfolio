@@ -79,27 +79,35 @@ redirect de confort l'était. Limite connue et acceptée : le contenu des pages 
 rendu serveur avant que le garde-fou client ne s'applique, mais ces pages n'affichent que des
 données déjà publiques (la liste des projets, identique à `/projects`), donc sans impact réel.
 
-## D7 — Formulaire de contact : `spring-boot-starter-mail` + rate limiting + honeypot
+## D7 — Formulaire de contact : envoi d'email via Resend + rate limiting + honeypot
 
 **Contexte** : `POST /api/contact` est un endpoint public non authentifié. Avant d'y brancher un
 envoi d'email vers une boîte personnelle, deux risques réels à couvrir : le spam de la boîte mail
 (coût quasi nul pour un bot, gênant en pratique) et l'épuisement d'un quota d'envoi.
-**Alternative envisagée** : un service d'email transactionnel tiers (Resend, Brevo...) — API plus
-propre, mais nouveau compte externe et nouvelle dépendance pour un besoin que Spring couvre déjà
-nativement. CAPTCHA (Turnstile/hCaptcha) écarté pour l'instant : efficace mais dépendance tierce et
-friction supplémentaire pour un formulaire de contact personnel à faible trafic — à reconsidérer
-si le spam devient un problème réel.
-**Décision** : `spring-boot-starter-mail` (SMTP Gmail), envoi asynchrone et best-effort (un échec
-SMTP est loggé, jamais renvoyé au visiteur — le message est de toute façon déjà persisté). Deux
-mitigations anti-spam sans dépendance externe : un champ honeypot (`ContactRequest.website`,
-invisible pour un humain, silencieusement ignoré s'il est rempli) et un rate limiter en mémoire par
-IP (5 tentatives/heure).
+**Alternative envisagée initialement** : `spring-boot-starter-mail` en SMTP direct vers Gmail —
+choisi en premier car officiellement supporté par Spring, sans nouveau compte externe. Écarté après
+coup : Render bloque les ports SMTP sortants (25/465/587) sur son tier gratuit, une mesure
+anti-spam courante chez les hébergeurs PaaS — les emails ne partaient jamais, même avec des
+identifiants corrects (voir `DEPLOYMENT.md` §7.6 pour le diagnostic complet). Aucun réglage
+applicatif ne peut contourner un blocage réseau de la plateforme d'hébergement.
+**Décision** : API HTTPS de [Resend](https://resend.com) (port 443, jamais bloqué), appelée via
+`RestClient` — déjà présent dans l'écosystème Spring (module `spring-boot-restclient`), donc zéro
+nouvelle dépendance de bibliothèque ; seulement un nouveau compte externe et une clé API, le prix à
+payer pour sortir du réseau de la plateforme d'hébergement. Envoi asynchrone et best-effort (un
+échec API est loggé, jamais renvoyé au visiteur — le message est de toute façon déjà persisté).
+CAPTCHA (Turnstile/hCaptcha) écarté pour l'instant : efficace mais dépendance tierce et friction
+supplémentaire pour un formulaire de contact personnel à faible trafic — à reconsidérer si le spam
+devient un problème réel. Deux mitigations anti-spam sans dépendance externe : un champ honeypot
+(`ContactRequest.website`, invisible pour un humain, silencieusement ignoré s'il est rempli) et un
+rate limiter en mémoire par IP (5 tentatives/heure).
 **Conséquences** : `server.forward-headers-strategy=framework` nécessaire pour que le rate
 limiter voie la vraie IP du visiteur derrière le proxy Render, sinon tout le monde partagerait la
-même IP apparente. `management.health.mail.enabled=false` nécessaire pour qu'un SMTP mal
-configuré ne fasse pas passer `/actuator/health` à DOWN (cf. `DEPLOYMENT.md` §7.5). Limite
-acceptée : l'état du rate limiter est perdu à chaque redémarrage de l'instance (tier gratuit
-Render) — non bloquant pour ce niveau de trafic, migrerait vers un store partagé sinon.
+même IP apparente. Spring Boot 4 a extrait l'auto-configuration de `RestClient` dans un module
+séparé (`spring-boot-restclient`), à ajouter explicitement — sans quoi l'application refuse de
+démarrer en production alors qu'un test peut accidentellement passer si le module est présent
+transitivement côté test (cf. `DEPLOYMENT.md` §7.7). Limite acceptée : l'état du rate limiter est
+perdu à chaque redémarrage de l'instance (tier gratuit Render) — non bloquant pour ce niveau de
+trafic, migrerait vers un store partagé sinon.
 
 ---
 
