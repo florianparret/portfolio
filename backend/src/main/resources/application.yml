@@ -11,25 +11,6 @@ spring:
       ddl-auto: validate
   flyway:
     enabled: true
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: ${MAIL_USERNAME:changeme@example.com}
-    password: ${MAIL_PASSWORD:changeme}
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-
-management:
-  health:
-    # L'envoi d'email est un best-effort annexe (cf. ContactNotificationService) : un souci SMTP
-    # ne doit jamais faire passer /actuator/health à DOWN, ce qui pourrait faire croire à la
-    # plateforme d'hébergement que toute l'API est en panne.
-    mail:
-      enabled: false
 
 server:
   port: 8080
@@ -51,3 +32,8 @@ app:
     allowed-origin: ${CORS_ALLOWED_ORIGIN:http://localhost:3000}
   contact:
     notification-email: ${CONTACT_NOTIFICATION_EMAIL:changeme@example.com}
+  resend:
+    # Render bloque les ports SMTP sortants sur son tier gratuit (voir DEPLOYMENT.md §7.6) ;
+    # Resend est appelé en HTTPS via RestClient, sans dépendance supplémentaire.
+    api-key: ${RESEND_API_KEY:changeme}
+    from-email: ${RESEND_FROM_EMAIL:onboarding@resend.dev}
